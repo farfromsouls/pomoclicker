@@ -1,19 +1,28 @@
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QLabel, QVBoxLayout, 
-                             QHBoxLayout, QWidget, QPushButton)
+                             QHBoxLayout, QWidget, QPushButton, QComboBox)
 from PyQt6.QtCore import QTimer, Qt, QUrl
 from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtGui import QFont
 
-from .styles import time_button_style, start_button_style, bottom_button_style
+from .styles import *
+from .stats import *
+from .shop import *
+from .inventory import *
+from .data import *
 
 import sys
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
+
         super().__init__()
         self.setWindowTitle("PomoClicker")
         self.setFixedSize(400, 300)
+        self.user = None
+
+        self.shop_window = ShopWindow()
+        self.shop_window.hide()
         
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -31,6 +40,16 @@ class MainWindow(QMainWindow):
         self.money_label.setStyleSheet("color: #2E8B57; background-color: #F0F8FF; padding: 5px; border-radius: 5px;")
         money_layout.addWidget(self.money_label)
         money_layout.addStretch()
+
+        usersbox_widget = QWidget()
+        userbox_layout = QHBoxLayout(usersbox_widget)
+        self.userbox= QComboBox(usersbox_widget)
+        self.userbox.setFixedHeight(40)
+
+        self.userbox.addItems(getUsers())
+        self.userbox.currentTextChanged.connect(self.changeUser)
+        userbox_layout.addWidget(self.userbox)
+        money_layout.addWidget(usersbox_widget)
         
         layout.addWidget(money_widget)
         layout.addSpacing(10)
@@ -50,7 +69,7 @@ class MainWindow(QMainWindow):
         layout.addLayout(time_buttons_layout)
         layout.addSpacing(20) 
         
-        self.timer_label = QLabel("25:00")
+        self.timer_label = QLabel("00:00")
         self.timer_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.timer_label.setFont(QFont("Arial", 48, QFont.Weight.Bold))
         self.timer_label.setStyleSheet("color: #2C3E50; background-color: #ECF0F1; border-radius: 10px;")
@@ -66,6 +85,8 @@ class MainWindow(QMainWindow):
         self.btn_inventory = QPushButton("Inventory")
         self.btn_shop = QPushButton("Shop")
         self.btn_stats = QPushButton("Stats")
+
+        self.btn_shop.clicked.connect(self.showShop)
         
         for btn in [self.btn_inventory, self.btn_shop, self.btn_stats]:
             btn.setStyleSheet(bottom_button_style)
@@ -77,9 +98,9 @@ class MainWindow(QMainWindow):
         
         self.timer = QTimer()
         self.timer.timeout.connect(self.updateTime)
-        self.remaining_time = 25 * 60  
+        self.remaining_time = 0
         self.is_timer_running = False
-        self.mode = 25 
+        self.mode = 0
         
         self.start_button.clicked.connect(self.toggleTimer)
         self.btn_30min.clicked.connect(lambda: self.setTime(0.1))
@@ -87,7 +108,7 @@ class MainWindow(QMainWindow):
         self.btn_1h.clicked.connect(lambda: self.setTime(60))
         self.updateDisplay()
 
-    def setTime(self, minutes):
+    def setTime(self, minutes: int) -> None:
         if self.is_timer_running:
             self.timer.stop()
             self.is_timer_running = False
@@ -97,7 +118,7 @@ class MainWindow(QMainWindow):
         self.remaining_time = round(minutes * 60)
         self.updateDisplay()
 
-    def toggleTimer(self):
+    def toggleTimer(self) -> None:
         if self.is_timer_running:
             self.timer.stop()
             self.is_timer_running = False
@@ -108,7 +129,7 @@ class MainWindow(QMainWindow):
                 self.is_timer_running = True
                 self.start_button.setText("PAUSE TIMER")
 
-    def updateTime(self):
+    def updateTime(self) -> None:
         if self.remaining_time > 0:
             self.remaining_time -= 1
             self.updateDisplay()
@@ -123,16 +144,27 @@ class MainWindow(QMainWindow):
                 self.money += 20
             elif self.mode == 60:
                 self.money += 30
-            
+            self.money += 6
+            setMoney(self.money, self.user)
             self.money_label.setText(f"Money: ${self.money}")
             self.effect.play()  
 
-    def updateDisplay(self):
+    def updateDisplay(self) -> None:
         minutes = self.remaining_time // 60
         seconds = self.remaining_time % 60
         self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
 
-def startApp():
+    def changeUser(self) -> None:
+        if self.is_timer_running == False:
+            if self.remaining_time == 0:
+                self.user = self.userbox.currentText()
+                self.money = getMoney(self.user)
+                self.money_label.setText(f"Money: ${self.money}")
+
+    def showShop(self): 
+        self.shop_window.show()
+
+def startApp() -> None:
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()

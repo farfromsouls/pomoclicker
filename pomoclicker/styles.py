@@ -49,3 +49,4 @@ QPushButton:pressed {
     background-color: #2471A3;
 }
 """
+
