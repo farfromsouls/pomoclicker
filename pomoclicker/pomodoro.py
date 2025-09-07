@@ -19,7 +19,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("PomoClicker")
         self.setFixedSize(400, 300)
-        self.user = None
 
         self.shop_window = ShopWindow()
         self.shop_window.hide()
@@ -32,7 +31,7 @@ class MainWindow(QMainWindow):
         self.effect.setSource(QUrl.fromLocalFile("pomoclicker/sound.wav"))
         self.effect.setVolume(1)
         
-        self.money = 0
+        self.money = getMoney()
         money_widget = QWidget()
         money_layout = QHBoxLayout(money_widget)
         self.money_label = QLabel(f"Money: ${self.money}")
@@ -40,16 +39,6 @@ class MainWindow(QMainWindow):
         self.money_label.setStyleSheet("color: #2E8B57; background-color: #F0F8FF; padding: 5px; border-radius: 5px;")
         money_layout.addWidget(self.money_label)
         money_layout.addStretch()
-
-        usersbox_widget = QWidget()
-        userbox_layout = QHBoxLayout(usersbox_widget)
-        self.userbox= QComboBox(usersbox_widget)
-        self.userbox.setFixedHeight(40)
-
-        self.userbox.addItems(getUsers())
-        self.userbox.currentTextChanged.connect(self.changeUser)
-        userbox_layout.addWidget(self.userbox)
-        money_layout.addWidget(usersbox_widget)
         
         layout.addWidget(money_widget)
         layout.addSpacing(10)
@@ -103,7 +92,7 @@ class MainWindow(QMainWindow):
         self.mode = 0
         
         self.start_button.clicked.connect(self.toggleTimer)
-        self.btn_30min.clicked.connect(lambda: self.setTime(0.1))
+        self.btn_30min.clicked.connect(lambda: self.setTime(30))
         self.btn_45min.clicked.connect(lambda: self.setTime(45))
         self.btn_1h.clicked.connect(lambda: self.setTime(60))
         self.updateDisplay()
@@ -144,8 +133,11 @@ class MainWindow(QMainWindow):
                 self.money += 20
             elif self.mode == 60:
                 self.money += 30
+
+            setMileAge(self.mode)
+
             self.money += 6
-            setMoney(self.money, self.user)
+            setMoney(self.money)
             self.money_label.setText(f"Money: ${self.money}")
             self.effect.play()  
 
@@ -153,13 +145,6 @@ class MainWindow(QMainWindow):
         minutes = self.remaining_time // 60
         seconds = self.remaining_time % 60
         self.timer_label.setText(f"{minutes:02d}:{seconds:02d}")
-
-    def changeUser(self) -> None:
-        if self.is_timer_running == False:
-            if self.remaining_time == 0:
-                self.user = self.userbox.currentText()
-                self.money = getMoney(self.user)
-                self.money_label.setText(f"Money: ${self.money}")
 
     def showShop(self): 
         self.shop_window.show()

@@ -7,29 +7,37 @@ cursor = conn.cursor()
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS Users (
     username TEXT PRIMARY KEY,
-    money INTEGER,
-    upgrade30 INTEGER,
-    upgrade45 INTEGER,
-    upgrade60 INTEGER
+    money INTEGER DEFAULT 0,
+    
+    sessions30 INTEGER DEFAULT 0,
+    sessions45 INTEGER DEFAULT 0,
+    sessions60 INTEGER DEFAULT 0,
+
+    upgrade30 INTEGER DEFAULT 0,
+    upgrade45 INTEGER DEFAULT 0,
+    upgrade60 INTEGER DEFAULT 0
 )''')
 
-def getUsers():
-    cursor.execute('SELECT username FROM Users')
-    users = cursor.fetchall()
-    return [user[0] for user in users]
+cursor.execute('SELECT username FROM Users WHERE username = ?', ("user", ))
+user = cursor.fetchone()
 
-def createUser():
+if user == None:
     cursor.execute('''
-    INSERT INTO Users (username, money, upgrade30, upgrade45, upgrade60)
-    VALUES (?, ?, ?, ?, ?)''', 
-    ("username1", 0, 0, 0, 0))
+    INSERT INTO Users (username)
+    VALUES (?)''',
+    ("user", ))
     conn.commit()
 
-def setMoney(money, username):
-    cursor.execute('UPDATE Users SET money = ? WHERE username = ?', (money, username, ))
+def setMoney(money):
+    cursor.execute('UPDATE Users SET money = ? WHERE username = "user"', (money, ))
     conn.commit()
 
-def getMoney(username):
-    cursor.execute('SELECT money FROM Users WHERE username = ?', (username, ))
+def getMoney():
+    cursor.execute('SELECT money FROM Users WHERE username = ?', ("user", ))
     money = cursor.fetchone()
     return money[0]
+
+def setMileAge(mode):
+    cursor.execute(f'UPDATE Users SET "sessions{mode}" = "sessions{mode}" + 1'
+                   +' WHERE username = ?', ("user", ))
+    conn.commit()
