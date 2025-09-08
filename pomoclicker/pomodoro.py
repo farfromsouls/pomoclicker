@@ -4,10 +4,11 @@ from PyQt6.QtCore import QTimer, Qt, QUrl
 from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtGui import QFont
 
-from .styles import *
 from .stats import *
 from .shop import *
-from .inventory import *
+from .clicker import *
+
+from .styles import *
 from .data import *
 
 import sys
@@ -23,9 +24,10 @@ class MainWindow(QMainWindow):
 
         self.stats_window = StatsWindow()
         self.stats_window.hide()
-
         self.shop_window = ShopWindow()
         self.shop_window.hide()
+        self.clicker_window = ClickerWindow()
+        self.clicker_window.hide()
         
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -89,17 +91,18 @@ class MainWindow(QMainWindow):
         
         # bottom buttons
         bottom_buttons_layout = QHBoxLayout()
-        self.btn_inventory = QPushButton("Inventory")
+        self.btn_clicker = QPushButton("Clicker")
         self.btn_shop = QPushButton("Shop")
         self.btn_stats = QPushButton("Stats")
 
         self.btn_shop.clicked.connect(self.__showShop)
         self.btn_stats.clicked.connect(self.__showStats)
+        self.btn_clicker.clicked.connect(self.__showClicker)
         
-        for btn in [self.btn_inventory, self.btn_shop, self.btn_stats]:
+        for btn in [self.btn_clicker, self.btn_shop, self.btn_stats]:
             btn.setStyleSheet(bottom_button_style)
         
-        bottom_buttons_layout.addWidget(self.btn_inventory)
+        bottom_buttons_layout.addWidget(self.btn_clicker)
         bottom_buttons_layout.addWidget(self.btn_shop)
         bottom_buttons_layout.addWidget(self.btn_stats)
         layout.addLayout(bottom_buttons_layout)
@@ -165,6 +168,9 @@ class MainWindow(QMainWindow):
 
     def __showStats(self) -> None:
         self.stats_window.show()
+
+    def __showClicker(self) -> None:
+        self.clicker_window.show()
 
 def startApp() -> None:
     app = QApplication(sys.argv)
