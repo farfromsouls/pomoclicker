@@ -45,5 +45,4 @@ def setMileAge(mode: int) -> None:
 def getMileAge() -> list[int]:
     cursor.execute('SELECT sessions30, sessions45, sessions60 FROM Users WHERE username = ?', ("user", ))
     mileage = cursor.fetchone()
-    print(mileage)
     return mileage

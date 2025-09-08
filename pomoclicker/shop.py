@@ -1,6 +1,4 @@
-from PyQt6.QtWidgets import (QMainWindow, QLabel, QVBoxLayout, 
-                             QWidget, QPushButton)
-from PyQt6.QtMultimedia import QSoundEffect
+from PyQt6.QtWidgets import (QMainWindow, QVBoxLayout, QWidget)
 
 from .data import *
 
