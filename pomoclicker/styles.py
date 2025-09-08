@@ -50,3 +50,18 @@ QPushButton:pressed {
 }
 """
 
+stats_style = """
+QMainWindow {
+    background-color: #2C3E50;
+}
+QLabel {
+    background-color: #34495E;
+    color: #ECF0F1;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px solid #1ABC9C;
+}
+"""
+

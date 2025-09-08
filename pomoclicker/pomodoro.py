@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QLabel, QVBoxLayout, 
-                             QHBoxLayout, QWidget, QPushButton, QComboBox)
+                             QHBoxLayout, QWidget, QPushButton)
 from PyQt6.QtCore import QTimer, Qt, QUrl
 from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtGui import QFont
@@ -16,9 +16,13 @@ import sys
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
 
+        # BASIC
         super().__init__()
         self.setWindowTitle("PomoClicker")
         self.setFixedSize(400, 300)
+
+        self.stats_window = StatsWindow()
+        self.stats_window.hide()
 
         self.shop_window = ShopWindow()
         self.shop_window.hide()
@@ -30,8 +34,11 @@ class MainWindow(QMainWindow):
         self.effect = QSoundEffect()
         self.effect.setSource(QUrl.fromLocalFile("pomoclicker/sound.wav"))
         self.effect.setVolume(1)
-        
+
         self.money = getMoney()
+        self.mode = None
+        
+        # ELEMENTS
         money_widget = QWidget()
         money_layout = QHBoxLayout(money_widget)
         self.money_label = QLabel(f"Money: ${self.money}")
@@ -47,7 +54,6 @@ class MainWindow(QMainWindow):
         self.btn_30min = QPushButton("30 min")
         self.btn_45min = QPushButton("45 min")
         self.btn_1h = QPushButton("1h")
-        self.mode = None
         
         for btn in [self.btn_30min, self.btn_45min, self.btn_1h]:
             btn.setStyleSheet(time_button_style)
@@ -76,6 +82,7 @@ class MainWindow(QMainWindow):
         self.btn_stats = QPushButton("Stats")
 
         self.btn_shop.clicked.connect(self.showShop)
+        self.btn_stats.clicked.connect(self.showStats)
         
         for btn in [self.btn_inventory, self.btn_shop, self.btn_stats]:
             btn.setStyleSheet(bottom_button_style)
@@ -134,10 +141,9 @@ class MainWindow(QMainWindow):
             elif self.mode == 60:
                 self.money += 30
 
-            setMileAge(self.mode)
-
-            self.money += 6
+            self.money += 30
             setMoney(self.money)
+            setMileAge(self.mode)
             self.money_label.setText(f"Money: ${self.money}")
             self.effect.play()  
 
@@ -148,6 +154,9 @@ class MainWindow(QMainWindow):
 
     def showShop(self): 
         self.shop_window.show()
+
+    def showStats(self):
+        self.stats_window.show()
 
 def startApp() -> None:
     app = QApplication(sys.argv)

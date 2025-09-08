@@ -28,16 +28,22 @@ if user == None:
     ("user", ))
     conn.commit()
 
-def setMoney(money):
+def setMoney(money: int) -> None:
     cursor.execute('UPDATE Users SET money = ? WHERE username = "user"', (money, ))
     conn.commit()
 
-def getMoney():
+def getMoney() -> int:
     cursor.execute('SELECT money FROM Users WHERE username = ?', ("user", ))
     money = cursor.fetchone()
     return money[0]
 
-def setMileAge(mode):
+def setMileAge(mode: int) -> None:
     cursor.execute(f'UPDATE Users SET "sessions{mode}" = "sessions{mode}" + 1'
                    +' WHERE username = ?', ("user", ))
     conn.commit()
+
+def getMileAge() -> list[int]:
+    cursor.execute('SELECT sessions30, sessions45, sessions60 FROM Users WHERE username = ?', ("user", ))
+    mileage = cursor.fetchone()
+    print(mileage)
+    return mileage
