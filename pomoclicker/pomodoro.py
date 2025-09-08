@@ -143,7 +143,6 @@ class MainWindow(QMainWindow):
         elif self.mode == 60:
             self.money += 30
 
-        self.money += 30
         setMoney(self.money)
         setMileAge(self.mode)
         self.money_label.setText(f"Money: ${self.money}")
