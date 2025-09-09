@@ -8,10 +8,14 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS Users (
     username TEXT PRIMARY KEY,
     money INTEGER DEFAULT 0,
+    clicks INTEGER DEFAULT 0,
     
     sessions30 INTEGER DEFAULT 0,
     sessions45 INTEGER DEFAULT 0,
     sessions60 INTEGER DEFAULT 0,
+               
+    upgradeClicks INTEGER DEFAULT 0,
+    upgradeAuto INTEGER DEFAULT 0, 
 
     upgrade30 INTEGER DEFAULT 0,
     upgrade45 INTEGER DEFAULT 0,
@@ -36,6 +40,16 @@ def getMoney() -> int:
     cursor.execute('SELECT money FROM Users WHERE username = ?', ("user", ))
     money = cursor.fetchone()
     return money[0]
+
+def addClicks(clicks: int) -> None:
+    cursor.execute(f'UPDATE Users SET "clicks" = "clicks" + {clicks}'
+                   +' WHERE username = ?', ("user", ))
+    conn.commit()
+
+def getClicks() -> int:
+    cursor.execute('SELECT clicks FROM Users WHERE username = ?', ("user", ))
+    clicks = cursor.fetchone()
+    return clicks[0]
 
 def setMileAge(mode: int) -> None:
     cursor.execute(f'UPDATE Users SET "sessions{mode}" = "sessions{mode}" + 1'

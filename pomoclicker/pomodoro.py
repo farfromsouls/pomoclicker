@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         #       BASIC
         super().__init__()
         self.setWindowTitle("PomoClicker")
-        self.setFixedSize(400, 300)
+        self.setFixedSize(400, 330)
 
         self.stats_window = StatsWindow()
         self.stats_window.hide()
@@ -38,15 +38,18 @@ class MainWindow(QMainWindow):
         self.effect.setVolume(1)
 
         self.money = getMoney()
+        self.clicks = getClicks()
         self.mode = None
-        
+
         #       ELEMENTS
         #money
         money_widget = QWidget()
         money_layout = QHBoxLayout(money_widget)
-        self.money_label = QLabel(f"Money: ${self.money}")
+        self.money_label = QLabel(f"Money: ${self.money}\n"
+                                 +f"Clicks: {self.clicks}")
         self.money_label.setFont(QFont("Arial", 14, QFont.Weight.Bold))
         self.money_label.setStyleSheet("color: #FFFFFF;")
+        self.money_label.setMinimumHeight(50)
         money_layout.addWidget(self.money_label)
         money_layout.addStretch()
         
@@ -148,7 +151,7 @@ class MainWindow(QMainWindow):
 
         setMoney(self.money)
         setMileAge(self.mode)
-        self.money_label.setText(f"Money: ${self.money}")
+        self.money_label.setText(f"Money: ${self.money}\n")
         self.effect.play()
 
     def __updateTime(self) -> None:
