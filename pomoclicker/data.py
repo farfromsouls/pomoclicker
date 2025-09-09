@@ -51,6 +51,10 @@ def getClicks() -> int:
     clicks = cursor.fetchone()
     return clicks[0]
 
+def setClicks(clicks: int) -> None:
+    cursor.execute(f'UPDATE Users SET clicks = ? WHERE username = ?', (clicks, "user", ))
+    conn.commit()
+
 def setMileAge(mode: int) -> None:
     cursor.execute(f'UPDATE Users SET "sessions{mode}" = "sessions{mode}" + 1'
                    +' WHERE username = ?', ("user", ))
@@ -65,3 +69,23 @@ def getUpgradesPomo() -> int:
     cursor.execute('SELECT upgrade30, upgrade45, upgrade60 FROM Users WHERE username = ?', ("user", ))
     upgrades = cursor.fetchone()
     return upgrades
+
+def addUpgradePomo(minutes) -> None:
+    cursor.execute(f'UPDATE Users SET "upgrade{minutes}" = "upgrade{minutes}" + 1 '
+                   +'WHERE username = ?', ("user", ))
+    conn.commit()
+
+def getClickerLevel() -> int:
+    cursor.execute('SELECT upgradeClicks FROM Users WHERE username = ?', ("user", ))
+    level = cursor.fetchone()
+    return level[0]
+
+def addClickerLevel() -> None:
+    cursor.execute(f'UPDATE Users SET upgradeClicks = upgradeClicks + 1 '
+                   +'WHERE username = ?', ("user", ))
+    conn.commit()
+
+def getAutoClickerLevel() -> int:
+    cursor.execute('SELECT upgradeAuto FROM Users WHERE username = ?', ("user", ))
+    level = cursor.fetchone()
+    return level[0]

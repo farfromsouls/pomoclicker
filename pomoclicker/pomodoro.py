@@ -7,7 +7,6 @@ from PyQt6.QtGui import QFont
 from .stats import *
 from .shop import *
 from .clicker import *
-
 from .styles import *
 from .data import *
 
@@ -15,12 +14,15 @@ import sys
 
 
 class MainWindow(QMainWindow):
+
+    stats_updated_signal = pyqtSignal()
+
     def __init__(self) -> None:
 
         #       BASIC
         super().__init__()
         self.setWindowTitle("PomoClicker")
-        self.setFixedSize(400, 330)
+        self.setFixedSize(400, 350)
 
         self.stats_window = StatsWindow()
         self.stats_window.hide()
@@ -30,6 +32,8 @@ class MainWindow(QMainWindow):
         self.clicker_window.hide()
 
         self.clicker_window.click_update_signal.connect(self.__updateClicks)
+        self.shop_window.buy_upgrade_signal.connect(self.__upgradePomo)
+        self.stats_updated_signal.connect(self.stats_window.update_stats)
         
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -41,6 +45,7 @@ class MainWindow(QMainWindow):
 
         self.money = getMoney()
         self.clicks = getClicks()
+        self.upgrades = getUpgradesPomo()
         self.mode = None
 
         #       ELEMENTS
@@ -60,9 +65,9 @@ class MainWindow(QMainWindow):
         
         # time buttons
         time_buttons_layout = QHBoxLayout()
-        self.btn_30min = QPushButton("30 min")
-        self.btn_45min = QPushButton("45 min")
-        self.btn_1h = QPushButton("1h")
+        self.btn_30min = QPushButton(f"30 min\n(+{10*self.upgrades[0]}$)")
+        self.btn_45min = QPushButton(f"45 min\n(+{20*self.upgrades[1]}$)")
+        self.btn_1h = QPushButton(f"1h\n(+{30*self.upgrades[2]}$)")
         
         for btn in [self.btn_30min, self.btn_45min, self.btn_1h]:
             btn.setStyleSheet(time_button_style)
@@ -157,6 +162,8 @@ class MainWindow(QMainWindow):
 
         setMoney(self.money)
         setMileAge(self.mode)
+
+        self.stats_updated_signal.emit()
         self.money_label.setText(f"Money: ${self.money}\n"
                                 +f"Clicks: {self.clicks}")
         self.effect.play()
@@ -168,10 +175,21 @@ class MainWindow(QMainWindow):
         else:
             self.__timeEnded() 
 
-    def __updateClicks(self):
+    def __updateClicks(self) -> None:
         self.clicks = getClicks()
         self.money_label.setText(f"Money: ${self.money}\n"
                                 +f"Clicks: {self.clicks}")
+        
+    def __upgradePomo(self) -> None:
+        upgrades = getUpgradesPomo()
+        self.clicks = getClicks()
+        self.money = getMoney()
+        self.money_label.setText(f"Money: ${self.money}\n"
+                                +f"Clicks: {self.clicks}")
+        self.btn_30min.setText(f"30 min\n(+{10*upgrades[0]})")
+        self.btn_45min.setText(f"45 min\n(+{20*upgrades[1]})")
+        self.btn_1h.setText(f"1h\n(+{30*upgrades[2]})")
+        self.clicker_window.updateClicksDisplay()
 
     def __updateDisplay(self) -> None:
         minutes = self.remaining_time // 60
@@ -182,6 +200,7 @@ class MainWindow(QMainWindow):
         self.shop_window.show()
 
     def __showStats(self) -> None:
+        self.stats_window.update_stats()
         self.stats_window.show()
 
     def __showClicker(self) -> None:

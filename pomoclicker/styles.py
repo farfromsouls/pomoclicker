@@ -75,7 +75,7 @@ QLabel {
     padding: 15px;
     border-radius: 8px;
     font-weight: bold;
-    font-size: 24px;
+    font-size: 15px;
     border: 2px solid #1ABC9C;
 }
 QPushButton {
@@ -94,3 +94,27 @@ QPushButton:pressed {
     background-color: #138D75;
 }
 """
+
+upgrade_button_style = """
+QPushButton {
+    background-color: #9B59B6;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 12px;
+    min-height: 60px;
+}
+QPushButton:hover {
+    background-color: #8E44AD;
+}
+QPushButton:pressed {
+    background-color: #7D3C98;
+}
+QPushButton:disabled {
+    background-color: #34495E;
+    color: #7F8C8D;
+}
+"""
+

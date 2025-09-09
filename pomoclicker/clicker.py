@@ -1,7 +1,10 @@
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy
+
 from .data import *
 from .styles import *
+from .shop import *
+
 
 class ClickerWindow(QMainWindow):
 
@@ -49,9 +52,12 @@ class ClickerWindow(QMainWindow):
         clickButton.clicked.connect(self.__Click)
 
     def __Click(self):
-        addClicks(1)
-        self.clicks = self.clicks + 1
-        self.clickLabel.setText(f"{self.clicks}")
+        click_multiplier = getClickerLevel()
+        addClicks(click_multiplier)
+        self.updateClicksDisplay()  # Используйте новый метод
         self.click_update_signal.emit()
-        
 
+    def updateClicksDisplay(self):
+        self.clicks = getClicks()
+        self.clickLabel.setText(f"{self.clicks}")
+        
