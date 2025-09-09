@@ -65,3 +65,32 @@ QLabel {
 }
 """
 
+stats_style = """
+QMainWindow {
+    background-color: #2C3E50;
+}
+QLabel {
+    background-color: #34495E;
+    color: #ECF0F1;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 24px;
+    border: 2px solid #1ABC9C;
+}
+QPushButton {
+    background-color: #1ABC9C;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+}
+QPushButton:hover {
+    background-color: #16A085;
+}
+QPushButton:pressed {
+    background-color: #138D75;
+}
+"""

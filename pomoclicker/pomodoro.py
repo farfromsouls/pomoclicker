@@ -28,6 +28,8 @@ class MainWindow(QMainWindow):
         self.shop_window.hide()
         self.clicker_window = ClickerWindow()
         self.clicker_window.hide()
+
+        self.clicker_window.click_update_signal.connect(self.__updateClicks)
         
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -141,17 +143,22 @@ class MainWindow(QMainWindow):
         self.timer.stop()
         self.is_timer_running = False
         self.start_button.setText("START TIMER")
+
+        upgrades = getUpgradesPomo()
         
         if self.mode == 30:
-            self.money += 10
+            self.money += 10 * upgrades[0]
+
         elif self.mode == 45:
-            self.money += 20
+            self.money += 20 * upgrades[1]
+
         elif self.mode == 60:
-            self.money += 30
+            self.money += 30 * upgrades[2]
 
         setMoney(self.money)
         setMileAge(self.mode)
-        self.money_label.setText(f"Money: ${self.money}\n")
+        self.money_label.setText(f"Money: ${self.money}\n"
+                                +f"Clicks: {self.clicks}")
         self.effect.play()
 
     def __updateTime(self) -> None:
@@ -160,6 +167,11 @@ class MainWindow(QMainWindow):
             self.__updateDisplay()
         else:
             self.__timeEnded() 
+
+    def __updateClicks(self):
+        self.clicks = getClicks()
+        self.money_label.setText(f"Money: ${self.money}\n"
+                                +f"Clicks: {self.clicks}")
 
     def __updateDisplay(self) -> None:
         minutes = self.remaining_time // 60

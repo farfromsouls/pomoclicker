@@ -14,12 +14,12 @@ CREATE TABLE IF NOT EXISTS Users (
     sessions45 INTEGER DEFAULT 0,
     sessions60 INTEGER DEFAULT 0,
                
-    upgradeClicks INTEGER DEFAULT 0,
+    upgradeClicks INTEGER DEFAULT 1,
     upgradeAuto INTEGER DEFAULT 0, 
 
-    upgrade30 INTEGER DEFAULT 0,
-    upgrade45 INTEGER DEFAULT 0,
-    upgrade60 INTEGER DEFAULT 0
+    upgrade30 INTEGER DEFAULT 1,
+    upgrade45 INTEGER DEFAULT 1,
+    upgrade60 INTEGER DEFAULT 1
 )''')
 
 cursor.execute('SELECT username FROM Users WHERE username = ?', ("user", ))
@@ -60,3 +60,8 @@ def getMileAge() -> list[int]:
     cursor.execute('SELECT sessions30, sessions45, sessions60 FROM Users WHERE username = ?', ("user", ))
     mileage = cursor.fetchone()
     return mileage
+
+def getUpgradesPomo() -> int:
+    cursor.execute('SELECT upgrade30, upgrade45, upgrade60 FROM Users WHERE username = ?', ("user", ))
+    upgrades = cursor.fetchone()
+    return upgrades

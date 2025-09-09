@@ -1,10 +1,12 @@
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow, QPushButton
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QMainWindow, QPushButton, QHBoxLayout, QSpacerItem, QSizePolicy
 from .data import *
 from .styles import *
 
-
 class ClickerWindow(QMainWindow):
+
+    click_update_signal = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Clicker!@")
@@ -13,22 +15,43 @@ class ClickerWindow(QMainWindow):
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-        layout.setSpacing(0)
+        
+        main_layout = QVBoxLayout(central_widget)
+        main_layout.setContentsMargins(20, 20, 20, 20)
+        
+        center_layout = QHBoxLayout()
+        main_layout.addLayout(center_layout)
+        
+        center_layout.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        
+        content_layout = QVBoxLayout()
+        center_layout.addLayout(content_layout)
+        
+        center_layout.addItem(QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
 
         self.clicks = getClicks()
 
-        clickLayout = QVBoxLayout()
         self.clickLabel = QLabel(f"{self.clicks}")
-        clickButton = QPushButton()
-        clickLayout.addWidget(self.clickLabel)
-        clickLayout.addWidget(clickButton)
+        self.clickLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.clickLabel.setMinimumSize(150, 60)
+        
+        clickButton = QPushButton("Click me!")
+        clickButton.setMinimumSize(150, 60)
+        clickButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        content_layout.addWidget(self.clickLabel)
+        content_layout.addWidget(clickButton)
+        content_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        main_layout.insertStretch(0, 1)
+        main_layout.addStretch(1)
 
         clickButton.clicked.connect(self.__Click)
-
-        layout.addLayout(clickLayout)
 
     def __Click(self):
         addClicks(1)
         self.clicks = self.clicks + 1
         self.clickLabel.setText(f"{self.clicks}")
+        self.click_update_signal.emit()
+        
+
